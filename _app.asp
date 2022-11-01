@@ -145,14 +145,16 @@ Class TinyJPG_Plugin
 		'--------------------------------------------------------
 		'*/
 		If Query.Data("Page") = "SHOW:DemoCompress" Then 
-			If Len(TestFileURL) < 2 Then 
-				TestFileURL = PLUGIN_ROOT & "/dist/test-images/a2fe21da9ce7d1698f5b48cdb506c853.jpg"
-			End If
+			Call PluginPage("Header")
+			
+			Dim TestFileURL
+				TestFileURL = PLUGIN_ROOT & "dist/test-images/a2fe21da9ce7d1698f5b48cdb506c853.jpg"
 			
 			Dim Sonuc
 				Sonuc = Compress(TestFileURL)
 
 			With Response 
+				.Write "<style>dt, dd {word-break: break-all !important;}</style>"
 				.Write "<div class=""row"">"
 				.Write "	<div class=""col-lg-6 col-6"">"
 				.Write "		<h6>Orjinal Görsel ("& BoyutHesapla( OriginalFileSize() ) &")</h6>"
@@ -165,21 +167,22 @@ Class TinyJPG_Plugin
 				.Write "</div>"
 				.Write "<div class=""row"">"
 				.Write "	<div class=""col-lg-6 col-6"">"
-				.Write "		<strong>Original File Name (String):</strong> "& OriginalFileName() &"<br/>"
-				.Write "		<strong>Original File URL (String):</strong> "& OriginalFileURL() &"<br/>"
-				.Write "		<strong>Original File Extension (String):</strong> "& OriginalFileExtension() &"<br/>"
-				.Write "		<strong>Original File Path (String):</strong> "& OriginalFilePath() &"<br/>"
-				.Write "		<strong>Original File Size (Byte):</strong> "& OriginalFileSize() &"<br/>"
-				.Write "		<strong>Original File Size (String):</strong> "& BoyutHesapla( OriginalFileSize() ) &"<br/>"
+				.Write "		<dl class=""row"">"
+				.Write "			<dt class=""col-lg-4 col-4"">Local URL (String):</dt> <dd class=""col-lg-8 col-8"">"& CompressedFileLocalURL() &"</dd>"
+				' .Write "			<dt class=""col-lg-4 col-4"">File URL (String):</dt> <dd class=""col-lg-8 col-8"">"& OriginalFileURL() &"</dd>"
+				.Write "			<dt class=""col-lg-4 col-4"">File Extension (String):</dt> <dd class=""col-lg-8 col-8"">"& OriginalFileExtension() &"</dd>"
+				.Write "			<dt class=""col-lg-4 col-4"">File Path (String):</dt> <dd class=""col-lg-8 col-8"">"& OriginalFilePath() &"</dd>"
+				.Write "			<dt class=""col-lg-4 col-4"">File Size (String):</dt> <dd class=""col-lg-8 col-8"">"& OriginalFileSize() &" byte - "& BoyutHesapla( OriginalFileSize() ) &"</dd>"
+				.Write "		</dl>"
 				.Write "	</div>"
 				.Write "	<div class=""col-lg-6 col-6"">"
-				.Write "		<strong>Compressed File Remote URL (String):</strong> "& CompressedFileRemoteURL() &"<br/>"
-				.Write "		<strong>Compressed File Local URL (String):</strong> "& CompressedFileLocalURL() &"<br/>"
-				.Write "		<strong>Compressed File Size (Byte):</strong> "& CompressedFileSize() &"<br/>"
-				.Write "		<strong>Compressed File Size (Byte):</strong> "& BoyutHesapla( CompressedFileSize() ) &"<br/>"
-				.Write "		<strong>Compress Ratio (Double):</strong> "& CompressRatio() &"<br/>"
-				.Write "		<strong>Earned (Byte):</strong> "& EarnedSize() &"<br/>"
-				.Write "		<strong>Earned (String):</strong> "& BoyutHesapla( EarnedSize() ) &"<br/>"
+				.Write "		<dl class=""row"">"
+				.Write "			<dt class=""col-lg-4 col-4"">Remote URL (String):</dt> <dd class=""col-lg-8 col-8"">"& CompressedFileRemoteURL() &"</dd>"
+				.Write "			<dt class=""col-lg-4 col-4"">File Size (Byte):</dt> <dd class=""col-lg-8 col-8"">"& CompressedFileSize() &"</dd>"
+				.Write "			<dt class=""col-lg-4 col-4"">File Size (Byte):</dt> <dd class=""col-lg-8 col-8"">"& BoyutHesapla( CompressedFileSize() ) &"</dd>"
+				.Write "			<dt class=""col-lg-4 col-4"">Ratio (Double):</dt> <dd class=""col-lg-8 col-8"">"& CompressRatio() &"</dd>"
+				.Write "			<dt class=""col-lg-4 col-4"">Earned Size:</dt> <dd class=""col-lg-8 col-8"">"& EarnedSize() &" byte - "& BoyutHesapla( EarnedSize() ) &"</dd>"
+				.Write "		</dl>"
 				.Write "	</div>"
 				.Write "	<div class=""col-lg-12 col-12"">"
 				.Write "		<h3>Sonuç: "& Sonuc &"</h3>"
@@ -191,6 +194,9 @@ Class TinyJPG_Plugin
 				.Write "	</div>"
 				.Write "</div>"
 			End With
+			
+			Call PluginPage("Footer")
+			Call SystemTeardown("destroy")
 		End If
 		'/*
 		'--------------------------------------------------------
@@ -280,23 +286,23 @@ Class TinyJPG_Plugin
 				PLUGIN_PANEL_MASTER_HEADER This()
 			'------------------------------------------------------------------------------------------
 			.Write "<div class=""row"">"
-			.Write "    <div class=""col-lg-6 col-sm-12"">"
+			.Write "    <div class=""col-lg-4 col-sm-12"">"
 			.Write 			QuickSettings("checkbox", ""& PLUGIN_CODE &"_PROTECTORIGINAL", "Orjinal Dosyayı Sakla", "", TO_DB)
+			.Write "    </div>"
+			.Write "    <div class=""col-lg-4 col-12"">"
+			.Write 			QuickSettings("select", ""& PLUGIN_CODE &"_APITYPE", "Üyelik Türü", "0#Ücretsiz|1#Ücretli", TO_DB)
+			.Write "    </div>"
+			.Write "    <div class=""col-lg-4 col-12"">"
+			.Write 			QuickSettings("input", ""& PLUGIN_CODE &"_SECRET", "API Anahtarı", "", TO_DB)
+			.Write "    </div>"
+			.Write "    <div class=""col-lg-3 col-12"">"
+			.Write 			QuickSettings("input", ""& PLUGIN_CODE &"_PLAN_LIMIT", "Aylık Limit (Free 500 Adettir)", "", TO_DB)
+			.Write "    </div>"
+			.Write "    <div class=""col-lg-3 col-12"">"
+			.Write 			QuickSettings("select", ""& PLUGIN_CODE &"_SAVEWITH", "Fiziksel Dosya Kayıt İstemcisi", "ADODB#ADODB|ASPJPEG#ASPJPEG", TO_DB)
 			.Write "    </div>"
 			.Write "    <div class=""col-lg-6 col-sm-12"">"
 			.Write 			QuickSettings("tag", ""& PLUGIN_CODE &"_ALLOWEDEXTENSION", "Kullanılabilir Uzantılar", "", TO_DB)
-			.Write "    </div>"
-			.Write "    <div class=""col-lg-12 col-12"">"
-			.Write 			QuickSettings("input", ""& PLUGIN_CODE &"_SECRET", "API Anahtarı", "", TO_DB)
-			.Write "    </div>"
-			.Write "    <div class=""col-lg-12 col-12"">"
-			.Write 			QuickSettings("input", ""& PLUGIN_CODE &"_PLAN_LIMIT", "Aylık Limitiniz (Free 500 Adettir)", "", TO_DB)
-			.Write "    </div>"
-			.Write "    <div class=""col-lg-12 col-12"">"
-			.Write 			QuickSettings("select", ""& PLUGIN_CODE &"_SAVEWITH", "Kayıt İstemcisi", "ADODB#ADODB|ASPJPEG#ASPJPEG", TO_DB)
-			.Write "    </div>"
-			.Write "    <div class=""col-lg-12 col-12"">"
-			.Write 			QuickSettings("select", ""& PLUGIN_CODE &"_APITYPE", "Üyelik Türü", "0#Ücretsiz|1#Ücretli", TO_DB)
 			.Write "    </div>"
 			.Write "</div>"
 
@@ -330,7 +336,7 @@ Class TinyJPG_Plugin
 
 			Set TinifyRS = Conn.Execute("SELECT IFNULL(COUNT(ID), 0) AS TOPLAM_GORSEL, IFNULL(SUM(ORIGINAL_FILE_SIZE),0) AS ORJINAL_TOPLAM_BOYUT, IFNULL(SUM(COMPRESSED_FILE_SIZE),0) AS SIKISTIRILAN_TOPLAM_BOYUT, IFNULL(SUM(EARNED_SIZE),0) AS TASARRUF FROM tbl_plugin_tinify")
 
-				tmp_toplam_gorsel   = TinifyRS("TOPLAM_GORSEL").value
+				' tmp_toplam_gorsel   = TinifyRS("TOPLAM_GORSEL").value
 				tmp_toplam_yukleme  = CLng( TinifyRS("ORJINAL_TOPLAM_BOYUT").value )
 				tmp_degisen_alan 	= CLng( TinifyRS("SIKISTIRILAN_TOPLAM_BOYUT").value )
 				tmp_toplam_tasarruf = CLng( TinifyRS("TASARRUF").value )
@@ -343,7 +349,6 @@ Class TinyJPG_Plugin
 			KacKredi.Close : Set KacKredi = Nothing
 
 			.Write "<div class=""col-lg-12 col-12"">"
-			.Write "	<h5>İstatistikler</h5>"
 			.Write "	<table class=""table table-striped table-bordered"">"
 			.Write "		<tr>"
 			.Write "			<td width=""30%""><strong>Kredi Kullanımı</strong></td>"
@@ -354,20 +359,11 @@ Class TinyJPG_Plugin
 			.Write "			<td>"& CreditCount &" Compression This Month</td>"
 			.Write "		</tr>"
 			.Write "		<tr>"
-			.Write "			<td><strong>Toplam Sıkıştırılan Görsel</strong></td>"
-			.Write "			<td>"& tmp_toplam_gorsel &" Görsel</td>"
-			.Write "		</tr>"
-			.Write "		<tr>"
-			.Write "			<td><strong>Toplam Yüklenen Orjinal Boyut</strong></td>"
-			.Write "			<td>"& BoyutHesapla( tmp_toplam_yukleme ) &"</td>"
-			.Write "		</tr>"
-			.Write "		<tr>"
-			.Write "			<td><strong>Toplam Tasarruflu Boyut</strong></td>"
-			.Write "			<td>"& BoyutHesapla( tmp_degisen_alan ) &"</td>"
-			.Write "		</tr>"
-			.Write "		<tr>"
-			.Write "			<td><strong>Toplam Kazanılan Tasarruf</strong></td>"
-			.Write "			<td>"& BoyutHesapla( tmp_toplam_tasarruf ) &"</td>"
+			.Write "			<td colspan=""2"" align=""center"">"
+			.Write "				<strong>Toplam Yüklenen Boyut</strong> "& BoyutHesapla( tmp_toplam_yukleme ) &", "
+			.Write "				<strong>Toplam Tasarruf</strong> "& BoyutHesapla( tmp_degisen_alan ) &", "
+			.Write "				<strong>Toplam Kazanılan Tasarruf</strong> "& BoyutHesapla( tmp_toplam_tasarruf ) &""
+			.Write "			</td>"
 			.Write "		</tr>"
 			.Write "	</table>"
 			.Write "</div>"
@@ -435,7 +431,7 @@ Class TinyJPG_Plugin
 		API_ENCRYPTED  		= base64_encode("api:"& TinifySecret &"")
 		FULL_SITE_URL 		= DOMAIN_URL
 		FailReason 			= "No Error"
-		ProtectOriginalFile = GetSettings(""& PLUGIN_CODE &"_PROTECTORIGINAL", "1")
+		ProtectOriginalFile = Cint( GetSettings(""& PLUGIN_CODE &"_PROTECTORIGINAL", "1") )
 		FileSize			= 0
 		FilePath			= ""
 		FileName 			= ""
@@ -579,7 +575,7 @@ Class TinyJPG_Plugin
 	'---------------------------------------------------------------
 	'*/
 	Public Property Get ProtectOriginal()
-		ProtectOriginal = IIf(ProtectOriginalFile, True, False)
+		ProtectOriginal = IIf(ProtectOriginalFile=1, True, False)
 	End Property
 	'/*
 	'---------------------------------------------------------------
@@ -747,7 +743,7 @@ Class TinyJPG_Plugin
 				FileSize = F.Size
 			Set F = Nothing
 
-			If ProtectOriginalFile = "1" Then 
+			If ProtectOriginalFile = 1 Then 
 				Fs.CopyFile FilePath, (FilePath & "NONTINIFIED_"&str_file_name), True
 			End If
 		Set Fs = Nothing
