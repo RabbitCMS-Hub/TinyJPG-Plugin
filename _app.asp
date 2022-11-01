@@ -144,6 +144,59 @@ Class TinyJPG_Plugin
 		' Sub Page
 		'--------------------------------------------------------
 		'*/
+		If Query.Data("Page") = "SHOW:DemoCompress" Then 
+			If Len(TestFileURL) < 2 Then 
+				TestFileURL = PLUGIN_ROOT & "/dist/test-images/a2fe21da9ce7d1698f5b48cdb506c853.jpg"
+			End If
+			
+			Dim Sonuc
+				Sonuc = Compress(TestFileURL)
+
+			With Response 
+				.Write "<div class=""row"">"
+				.Write "	<div class=""col-lg-6 col-6"">"
+				.Write "		<h6>Orjinal Görsel ("& BoyutHesapla( OriginalFileSize() ) &")</h6>"
+				.Write "		<img src="""& TestFileURL &""" class=""img-fluid"" />"
+				.Write "	</div>"
+				.Write "	<div class=""col-lg-6 col-6"">"
+				.Write "		<h6>Sıkıştırılmış Görsel ("& BoyutHesapla( CompressedFileSize() ) &")</h6>"
+				.Write "		<img src="""& CompressedFileLocalURL() &""" class=""img-fluid"" />"
+				.Write "	</div>"
+				.Write "</div>"
+				.Write "<div class=""row"">"
+				.Write "	<div class=""col-lg-6 col-6"">"
+				.Write "		<strong>Original File Name (String):</strong> "& OriginalFileName() &"<br/>"
+				.Write "		<strong>Original File URL (String):</strong> "& OriginalFileURL() &"<br/>"
+				.Write "		<strong>Original File Extension (String):</strong> "& OriginalFileExtension() &"<br/>"
+				.Write "		<strong>Original File Path (String):</strong> "& OriginalFilePath() &"<br/>"
+				.Write "		<strong>Original File Size (Byte):</strong> "& OriginalFileSize() &"<br/>"
+				.Write "		<strong>Original File Size (String):</strong> "& BoyutHesapla( OriginalFileSize() ) &"<br/>"
+				.Write "	</div>"
+				.Write "	<div class=""col-lg-6 col-6"">"
+				.Write "		<strong>Compressed File Remote URL (String):</strong> "& CompressedFileRemoteURL() &"<br/>"
+				.Write "		<strong>Compressed File Local URL (String):</strong> "& CompressedFileLocalURL() &"<br/>"
+				.Write "		<strong>Compressed File Size (Byte):</strong> "& CompressedFileSize() &"<br/>"
+				.Write "		<strong>Compressed File Size (Byte):</strong> "& BoyutHesapla( CompressedFileSize() ) &"<br/>"
+				.Write "		<strong>Compress Ratio (Double):</strong> "& CompressRatio() &"<br/>"
+				.Write "		<strong>Earned (Byte):</strong> "& EarnedSize() &"<br/>"
+				.Write "		<strong>Earned (String):</strong> "& BoyutHesapla( EarnedSize() ) &"<br/>"
+				.Write "	</div>"
+				.Write "	<div class=""col-lg-12 col-12"">"
+				.Write "		<h3>Sonuç: "& Sonuc &"</h3>"
+				.Write "		<strong>Process Status (String):</strong> "& Sonuc &"<br/>"
+				.Write "		<strong>Allowed Extensions (Array):</strong> "& Join(AllowedExtensions(), ",") &"<br/>"
+				.Write "		<strong>Protect Original File (Boolean):</strong> "& ProtectOriginal() &"<br/>"
+				.Write "		<strong>This Month Total Compress (String):</strong> "& TotalMonthCompress() &"<br/>"
+				.Write "		<strong>Debug (String):</strong> "& Debug() &"<br/>"
+				.Write "	</div>"
+				.Write "</div>"
+			End With
+		End If
+		'/*
+		'--------------------------------------------------------
+		' Sub Page
+		'--------------------------------------------------------
+		'*/
 		If Query.Data("Page") = "SHOW:ResetStats" Then
 			Conn.Execute("TRUNCATE tbl_plugin_tinify")
 			' SetSettings "TINIFY_PLUGIN_APITYPE", "0"
@@ -332,6 +385,9 @@ Class TinyJPG_Plugin
 			.Write "        </a>"
 			.Write "        <a open-iframe href=""ajax.asp?Cmd=PluginSettings&PluginName="& PLUGIN_CODE &"&Page=SHOW:ResetStats"" class=""btn btn-sm btn-danger"">"
 			.Write "        	İstatistikleri Sıfırla"
+			.Write "        </a>"
+			.Write "        <a open-iframe href=""ajax.asp?Cmd=PluginSettings&PluginName="& PLUGIN_CODE &"&Page=SHOW:DemoCompress"" class=""btn btn-sm btn-warning"">"
+			.Write "        	Demo Çalıştır"
 			.Write "        </a>"
 			.Write "    </div>"
 			.Write "</div>"
@@ -773,42 +829,6 @@ Class TinyJPG_Plugin
 		End If
 
 		FailReason = FilePath
-	End Property
-	'/*
-	'---------------------------------------------------------------
-	'
-	'---------------------------------------------------------------
-	'*/
-	Public Property Get Test(TestFileURL)
-		If Len(TestFileURL) < 2 Then 
-			TestFileURL = PLUGIN_ROOT & "/dist/test-images/a2fe21da9ce7d1698f5b48cdb506c853.jpg"
-		End If
-		Dim Sonuc
-			Sonuc = Compress(TestFileURL)
-
-		Response.Write "<h1>Tinify Test</h1>"
-		Response.Write "<h3>Sonuç: "& Sonuc &"</h3>"
-		Response.Write "<strong>Process Status (String):</strong> "& Sonuc &"<br/>"
-		Response.Write "<strong>Allowed Extensions (Array):</strong> "& Join(AllowedExtensions(), ",") &"<br/>"
-		Response.Write "<strong>Protect Original File (Boolean):</strong> "& ProtectOriginal() &"<br/>"
-		Response.Write "<hr>"
-		Response.Write "<strong>Original File Name (String):</strong> "& OriginalFileName() &"<br/>"
-		Response.Write "<strong>Original File URL (String):</strong> "& OriginalFileURL() &"<br/>"
-		Response.Write "<strong>Original File Extension (String):</strong> "& OriginalFileExtension() &"<br/>"
-		Response.Write "<strong>Original File Path (String):</strong> "& OriginalFilePath() &"<br/>"
-		Response.Write "<strong>Original File Size (Byte):</strong> "& OriginalFileSize() &"<br/>"
-		Response.Write "<strong>Original File Size (String):</strong> "& BoyutHesapla( OriginalFileSize() ) &"<br/>"
-		Response.Write "<hr>"
-		Response.Write "<strong>Compressed File Remote URL (String):</strong> "& CompressedFileRemoteURL() &"<br/>"
-		Response.Write "<strong>Compressed File Local URL (String):</strong> "& CompressedFileLocalURL() &"<br/>"
-		Response.Write "<strong>Compressed File Size (Byte):</strong> "& CompressedFileSize() &"<br/>"
-		Response.Write "<strong>Compressed File Size (Byte):</strong> "& BoyutHesapla( CompressedFileSize() ) &"<br/>"
-		Response.Write "<strong>Compress Ratio (Double):</strong> "& CompressRatio() &"<br/>"
-		Response.Write "<strong>Earned (Byte):</strong> "& EarnedSize() &"<br/>"
-		Response.Write "<strong>Earned (String):</strong> "& BoyutHesapla( EarnedSize() ) &"<br/>"
-		Response.Write "<hr>"
-		Response.Write "<strong>This Month Total Compress (String):</strong> "& TotalMonthCompress() &"<br/>"
-		Response.Write "<strong>Debug (String):</strong> "& Debug() &"<br/>"
 	End Property
 End Class 
 %>
