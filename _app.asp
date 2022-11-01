@@ -456,7 +456,7 @@ Class TinyJPG_Plugin
 		'-----------------------------------------------------------------------------------
 		'*/
 		If PLUGIN_AUTOLOAD_AT("WEB") = True Then 
-			Cms.FooterData = WhatsappWidgetData()
+
 		End If
 	End Sub
 	'/*
