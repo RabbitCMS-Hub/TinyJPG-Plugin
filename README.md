@@ -1,0 +1,2 @@
+# TinyJPG-Plugin
+TinyJPG Plugin
