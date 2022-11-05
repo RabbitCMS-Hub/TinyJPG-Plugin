@@ -744,7 +744,7 @@ Class TinyJPG_Plugin
 			Set F = Nothing
 
 			If ProtectOriginalFile = 1 Then 
-				Fs.CopyFile FilePath, (FilePath & "NONTINIFIED_"&str_file_name), True
+				Fs.CopyFile FilePath, (FilePath & "NONTINIFIED_"&FileName), True
 			End If
 		Set Fs = Nothing
 
