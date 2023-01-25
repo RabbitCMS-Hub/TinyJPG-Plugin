@@ -77,7 +77,7 @@ Class TinyJPG_Plugin
     		q=q+"  `ID` int(11) NOT NULL AUTO_INCREMENT, "
     		q=q+"  `FILENAME` varchar(255) DEFAULT NULL, "
     		q=q+"  `FULL_PATH` varchar(255) DEFAULT NULL, "
-    		q=q+"  `COMPRESS_DATE` datetime DEFAULT NULL, "
+    		q=q+"  `COMPRESS_DATE` datetime DEFAULT current_timestamp(), "
     		q=q+"  `COMPRESS_RATIO` double(255,0) DEFAULT NULL, "
     		q=q+"  `ORIGINAL_FILE_SIZE` bigint(20) DEFAULT 0, "
     		q=q+"  `COMPRESSED_FILE_SIZE` bigint(20) DEFAULT 0, "
